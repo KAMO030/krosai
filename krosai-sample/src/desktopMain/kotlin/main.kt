@@ -16,6 +16,8 @@ fun main(): Unit = application {
         title = "krosai-sample",
     ) {
         App()
+        // GoBangGame
+//        GoBangGame()
     }
 }
 
