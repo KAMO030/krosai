@@ -16,7 +16,7 @@ interface Enhancer {
      * @param request The request to enhance.
      * @return The enhanced request.
      */
-    fun enhanceRequest(request: ChatClientRequest): ChatClientRequest
+    fun enhanceRequest(request: ChatClientRequest): ChatClientRequest = request
 
     /**
      * Enhance the response.
@@ -24,7 +24,8 @@ interface Enhancer {
      * @param enhancerParams  taken from the enhancerParams of the request parameter.
      * @return The enhanced response.
      */
-    fun enhanceResponse(response: ChatResponse, enhancerParams: Map<String, Any>): ChatResponse
+    fun enhanceResponse(response: ChatResponse, enhancerParams: Map<String, Any>): ChatResponse =
+        response
 
     /**
      * Enhance the response flow.
@@ -32,7 +33,10 @@ interface Enhancer {
      * @param enhancerParams  taken from the enhancerParams of the request parameter.
      * @return The enhanced response flow.
      */
-    fun enhanceResponse(responseFlow: Flow<ChatResponse>, enhancerParams: Map<String, Any>): Flow<ChatResponse>
+    fun enhanceResponse(
+        responseFlow: Flow<ChatResponse>,
+        enhancerParams: Map<String, Any>
+    ): Flow<ChatResponse> = responseFlow
 
 }
 

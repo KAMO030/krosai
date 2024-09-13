@@ -1,8 +1,17 @@
 package org.krosai.core.util
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.descriptors.PolymorphicKind
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.SerialKind
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.elementDescriptors
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 
 /**
  * Resolve type schema from SerialDescriptor
@@ -34,7 +43,17 @@ internal fun resolveTypeSchema(
             val kind = element.kind
             parameter["type"] = when (kind) {
 
-                is PrimitiveKind -> kind.toString().lowercase()
+                is PrimitiveKind -> when (kind) {
+                    PrimitiveKind.BOOLEAN -> "boolean"
+                    PrimitiveKind.BYTE -> "integer"
+                    PrimitiveKind.CHAR -> "string"
+                    PrimitiveKind.DOUBLE -> "number"
+                    PrimitiveKind.FLOAT -> "number"
+                    PrimitiveKind.INT -> "integer"
+                    PrimitiveKind.LONG -> "integer"
+                    PrimitiveKind.SHORT -> "integer"
+                    PrimitiveKind.STRING -> "string"
+                }
 
 
                 SerialKind.ENUM -> {
