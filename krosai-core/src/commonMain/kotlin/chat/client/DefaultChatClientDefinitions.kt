@@ -29,7 +29,7 @@ class DefaultChatClient(
             Enhancer::enhanceRequest
         )
 
-        val prompt = creatPrompt(request)
+        val prompt = createPrompt(request)
 
 
         return enhancers.enhancing(chatModel.call(prompt)) { response ->
@@ -48,7 +48,7 @@ class DefaultChatClient(
             Enhancer::enhanceRequest
         )
 
-        val prompt = creatPrompt(request)
+        val prompt = createPrompt(request)
 
         return enhancers.enhancing(chatModel.stream(prompt)) { responseFlow ->
             enhanceResponse(responseFlow, request.enhancerParams)
@@ -57,11 +57,11 @@ class DefaultChatClient(
     }
 
 
-    private fun creatPrompt(request: ChatClientRequest): Prompt {
+    private fun createPrompt(request: ChatClientRequest): Prompt {
 
         val messages: List<Message> = request.messages + listOfNotNull(
-            request.userText.invoke(request.userParams)?.let { Message.User(it) },
             request.systemText.invoke(request.systemParams)?.let { Message.System(it) },
+            request.userText.invoke(request.userParams)?.let { Message.User(it) },
         )
         if (request.chatOptions is FunctionCallOptions) {
             request.chatOptions.functionCalls.addAll(request.functionCalls)
