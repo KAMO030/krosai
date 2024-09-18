@@ -72,6 +72,7 @@ internal fun resolveTypeSchema(
     return result
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 fun doResolveElement(
     descriptor: SerialDescriptor,
 ): Any {
