@@ -18,7 +18,7 @@ class DefaultChatClient(
     private val defaultRequest: DefaultChatClientRequestScope,
 ) : ChatClient {
 
-    override suspend fun call(requestScopeSpec: ChatClientRequestDefinition): ChatResponse {
+    override suspend fun call(requestScopeSpec: ChatClientRequestDefinition?): ChatResponse {
         val requestScope = DefaultChatClientRequestScope(defaultRequest)
             .also { requestScopeSpec?.invoke(it) }
 
@@ -37,7 +37,7 @@ class DefaultChatClient(
         }
     }
 
-    override suspend fun stream(requestScopeSpec: ChatClientRequestDefinition): Flow<ChatResponse> {
+    override suspend fun stream(requestScopeSpec: ChatClientRequestDefinition?): Flow<ChatResponse> {
         val requestScope = DefaultChatClientRequestScope(defaultRequest)
             .also { requestScopeSpec?.invoke(it) }
 
@@ -60,8 +60,8 @@ class DefaultChatClient(
     private fun createPrompt(request: ChatClientRequest): Prompt {
 
         val messages: List<Message> = request.messages + listOfNotNull(
-            request.systemText.invoke(request.systemParams)?.let { Message.System(it) },
-            request.userText.invoke(request.userParams)?.let { Message.User(it) },
+            request.systemTextTemplate?.invoke(request.systemParams)?.let { Message.System(it) },
+            request.userTextTemplate?.invoke(request.userParams)?.let { Message.User(it) },
         )
         if (request.chatOptions is FunctionCallOptions) {
             request.chatOptions.functionCalls.addAll(request.functionCalls)
@@ -94,12 +94,14 @@ class DefaultChatClientRequestScope(
         chatClientRequest = other.chatClientRequest.copy()
     )
 
-    override fun userText(block: Map<String, Any>.() -> String?) {
-        chatClientRequest.userText = block
+    fun copy(): DefaultChatClientRequestScope = DefaultChatClientRequestScope(this)
+
+    override fun userText(template: TextTemplate) {
+        chatClientRequest.userTextTemplate = template
     }
 
-    override fun systemText(block: Map<String, Any>.() -> String?) {
-        chatClientRequest.userText = block
+    override fun systemText(template: TextTemplate) {
+        chatClientRequest.userTextTemplate = template
     }
 
     override fun user(userScope: PromptUserScope.() -> Unit) {
@@ -148,14 +150,14 @@ class DefaultPromptUserScope(
     chatClientRequestScope: DefaultChatClientRequestScope,
 ) : PromptUserScope {
 
-    internal var text: Map<String, Any>.() -> String?
-            by chatClientRequestScope.chatClientRequest::userText
+    private var template: TextTemplate?
+            by chatClientRequestScope.chatClientRequest::userTextTemplate
 
     private val params: MutableMap<String, Any>
             by chatClientRequestScope.chatClientRequest::userParams
 
-    override fun text(block: Map<String, Any>.() -> String?) {
-        text = block
+    override fun text(template: TextTemplate) {
+        this.template = template
     }
 
     override fun String.to(value: Any) {
@@ -168,14 +170,14 @@ class DefaultPromptSystemScope(
     chatClientRequestScope: DefaultChatClientRequestScope,
 ) : PromptSystemScope {
 
-    internal var text: Map<String, Any>.() -> String?
-            by chatClientRequestScope.chatClientRequest::systemText
+    private var template: TextTemplate?
+            by chatClientRequestScope.chatClientRequest::systemTextTemplate
 
     private val params: MutableMap<String, Any>
             by chatClientRequestScope.chatClientRequest::systemParams
 
-    override fun text(block: Map<String, Any>.() -> String?) {
-        text = block
+    override fun text(template: TextTemplate) {
+        this.template = template
     }
 
     override fun String.to(value: Any) {

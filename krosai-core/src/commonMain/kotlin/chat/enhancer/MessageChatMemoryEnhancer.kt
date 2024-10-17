@@ -26,7 +26,7 @@ class MessageChatMemoryEnhancer(
         val conversationId = request.enhancerParams.getConversationId()
         val takeLastN = request.enhancerParams.getTakeLastN()
         request.messages += messageStore[conversationId to takeLastN]
-        request.userText(request.userParams)?.let {
+        request.userTextTemplate?.invoke(request.userParams)?.let {
             messageStore += conversationId to Message.User(it)
         }
         return request

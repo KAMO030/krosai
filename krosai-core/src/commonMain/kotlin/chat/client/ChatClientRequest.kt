@@ -10,8 +10,8 @@ import org.krosai.core.chat.prompt.ChatOptions
  *
  *
  * @property chatOptions The chat options for the request.
- * @property systemText A lambda function that returns the system text for the request.
- * @property userText   A lambda function that returns the user text for the request.
+ * @property systemTextTemplate A lambda function that returns the system text for the request.
+ * @property userTextTemplate   A lambda function that returns the user text for the request.
  * @property userParams The user parameters for the request.
  * @property systemParams The system parameters for the request.
  * @property functionCalls The list of function calls for the request.
@@ -25,8 +25,8 @@ import org.krosai.core.chat.prompt.ChatOptions
  */
 data class ChatClientRequest(
     val chatOptions: ChatOptions,
-    var systemText: Map<String, Any>.() -> String? = { null },
-    var userText: Map<String, Any>.() -> String? = { null },
+    var systemTextTemplate: TextTemplate? = null,
+    var userTextTemplate: TextTemplate? = null,
     val userParams: MutableMap<String, Any> = mutableMapOf(),
     val systemParams: MutableMap<String, Any> = mutableMapOf(),
     val functionCalls: MutableList<FunctionCall> = mutableListOf(),
@@ -37,8 +37,8 @@ data class ChatClientRequest(
 ) {
     constructor(clientRequest: ChatClientRequest) : this(
         chatOptions = clientRequest.chatOptions,
-        systemText = clientRequest.systemText,
-        userText = clientRequest.userText,
+        systemTextTemplate = clientRequest.systemTextTemplate,
+        userTextTemplate = clientRequest.userTextTemplate,
         functionNames = clientRequest.functionNames.toMutableSet(),
         functionCalls = clientRequest.functionCalls.toMutableList(),
         userParams = clientRequest.userParams.toMutableMap(),

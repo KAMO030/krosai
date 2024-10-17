@@ -22,7 +22,7 @@ interface ModelFactory {
 
     fun createImageModel(): ImageModel
 
-    fun createChatClient(scope: ChatClientRequestDefinition = null): ChatClient {
+    fun createChatClient(scope: ChatClientRequestDefinition? = null): ChatClient {
         val chatModel = createChatModel()
         val defaultRequest = DefaultChatClientRequestScope(chatModel, null).also { scope?.invoke(it) }
         return DefaultChatClient(chatModel, defaultRequest)
