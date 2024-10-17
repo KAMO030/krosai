@@ -5,7 +5,8 @@ import org.krosai.core.chat.function.FunctionCall
 import org.krosai.core.chat.model.ChatModel
 import org.krosai.core.embedding.model.EmbeddingModel
 import org.krosai.core.factory.ModelFactory
-import org.krosai.core.factory.createModelFactory
+import org.krosai.core.factory.ModelFactoryBuilder
+import org.krosai.core.factory.ModelFactoryContext
 import org.krosai.core.image.ImageModel
 import org.krosai.openai.api.OpenAiApi
 import org.krosai.openai.factory.OpenAiModelFactoryConfig.Companion.DefaultClientBlock
@@ -13,16 +14,22 @@ import org.krosai.openai.model.OpenAiChatModel
 import org.krosai.openai.model.OpenAiEmbeddingModel
 import org.krosai.openai.model.OpenAiImageModel
 
-val OpenAi = createModelFactory(
-    "OpenAi",
-    ::OpenAiModelFactoryConfig
-) { context ->
-    return@createModelFactory OpenAiModelFactory(this, context::getFunctionCallsByName)
+object OpenAi : ModelFactoryBuilder<OpenAiModelFactoryConfig, OpenAiModelFactory> {
+
+    override val id: String = "OpenAi"
+
+    override fun createConfig(): OpenAiModelFactoryConfig = OpenAiModelFactoryConfig()
+
+    override fun build(config: OpenAiModelFactoryConfig, factoryContext: ModelFactoryContext?): OpenAiModelFactory =
+        OpenAiModelFactory(config) {
+            factoryContext?.getFunctionCallsByName(it) ?: emptyList()
+        }
+
 }
 
 class OpenAiModelFactory(
     private val config: OpenAiModelFactoryConfig,
-    private val getFunctionCall: (Set<String>) -> List<FunctionCall>
+    private val getFunctionCall: (Set<String>) -> List<FunctionCall>,
 ) : ModelFactory {
 
     private val client: HttpClient by lazy {

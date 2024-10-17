@@ -4,7 +4,10 @@ import kotlinx.coroutines.test.runTest
 import org.krosai.core.chat.enhancer.ChatMemorySupport
 import org.krosai.core.chat.enhancer.MessageChatMemoryEnhancer
 import org.krosai.core.chat.memory.InMemoryMessageStore
+import org.krosai.core.factory.createModelFactory
+import org.krosai.openai.factory.OpenAi
 import org.krosai.openai.test.ModelFactorySupport
+import org.krosai.openai.test.chat.function.dateTimeFun
 import kotlin.test.Test
 
 class EnhanceTest : ModelFactorySupport {
@@ -21,8 +24,9 @@ class EnhanceTest : ModelFactorySupport {
         }.let {
             println("content: ${it.content}")
         }
+        OpenAi.createModelFactory().createChatClient {
 
-
+        }
         chatClient.call {
             userText { "Please answer in Japanese" }
         }.let {
@@ -30,6 +34,9 @@ class EnhanceTest : ModelFactorySupport {
         }
     }
 
+    fun then() {
+
+    }
     @Test
     fun enhanceStreamTest() = runTest {
         val chatClient = factory.createChatClient {
@@ -62,6 +69,9 @@ class EnhanceTest : ModelFactorySupport {
         }
         chatClient.call {
             userText { "Please call me Kamo." }
+            functions {
+                +dateTimeFun
+            }
             enhancers {
                 ChatMemorySupport.CONVERSATION_ID_KEY to "test"
             }

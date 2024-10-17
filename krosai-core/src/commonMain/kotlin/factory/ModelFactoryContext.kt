@@ -47,12 +47,9 @@ class ModelFactoryContext {
 
     inline fun <Builder : ModelFactoryBuilder<Config, M>, Config, M : ModelFactory> create(
         factoryBuilder: Builder,
-        noinline block: (Config.() -> Unit)? = null
-    ): ModelFactory {
-        val configuration = factoryBuilder.createConfig()
-        block?.apply { invoke(configuration) }
-        return factoryBuilder.build(this, configuration)
-    }
+        noinline block: (Config.() -> Unit)? = null,
+    ): ModelFactory = factoryBuilder.createModelFactory(block, this)
+
 
 }
 

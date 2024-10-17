@@ -36,24 +36,13 @@ interface ModelFactoryBuilder<Config, M : ModelFactory> {
 
     fun createConfig(): Config
 
-    fun build(factoryContext: ModelFactoryContext, config: Config): M
+    fun build(config: Config = createConfig(), factoryContext: ModelFactoryContext? = null): M
 
 }
 
-fun <Config : Any, M : ModelFactory> createModelFactory(
-    id: String,
-    configBuilder: () -> Config,
-    builder: Config.(context: ModelFactoryContext) -> M
-): ModelFactoryBuilder<Config, M> {
-    return object : ModelFactoryBuilder<Config, M> {
+fun <Config, M : ModelFactory> ModelFactoryBuilder<Config, M>.createModelFactory(
+    block: (Config.() -> Unit)? = null,
+    factoryContext: ModelFactoryContext? = null,
+) = this.build(createConfig().apply { block?.invoke(this) }, factoryContext)
 
-        override val id: String = id
-
-        override fun createConfig(): Config = configBuilder()
-
-        override fun build(factoryContext: ModelFactoryContext, config: Config): M =
-            builder.invoke(config, factoryContext)
-
-    }
-}
 
