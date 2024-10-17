@@ -8,6 +8,7 @@ import org.krosai.core.factory.ModelFactory
 import org.krosai.core.factory.createModelFactory
 import org.krosai.core.image.ImageModel
 import org.krosai.openai.api.OpenAiApi
+import org.krosai.openai.factory.OpenAiModelFactoryConfig.Companion.DefaultClientBlock
 import org.krosai.openai.model.OpenAiChatModel
 import org.krosai.openai.model.OpenAiEmbeddingModel
 import org.krosai.openai.model.OpenAiImageModel
@@ -25,7 +26,10 @@ class OpenAiModelFactory(
 ) : ModelFactory {
 
     private val client: HttpClient by lazy {
-        HttpClient(block = config.clientBlock)
+        HttpClient {
+            DefaultClientBlock()
+            config.clientBlock(this)
+        }
     }
 
     private val api by lazy {

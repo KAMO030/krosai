@@ -1,10 +1,7 @@
 package org.krosai.sample.di
 
 import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
-import io.ktor.client.plugins.sse.*
-import io.ktor.serialization.kotlinx.json.*
 import org.koin.core.qualifier._q
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -15,12 +12,10 @@ import org.krosai.core.chat.function.FunctionCall
 import org.krosai.core.chat.memory.InMemoryMessageStore
 import org.krosai.core.factory.ModelFactory
 import org.krosai.core.factory.ModelFactoryContext
-import org.krosai.core.util.DefaultJsonConverter
 import org.krosai.openai.factory.OpenAi
 import org.krosai.sample.LocalData
 import org.krosai.sample.function.GetURL
 import org.krosai.sample.function.OpenBrowser
-import kotlin.time.Duration.Companion.seconds
 
 val AiModule = module {
 
@@ -32,12 +27,6 @@ val AiModule = module {
                         this.socketTimeoutMillis = 100000
                         this.connectTimeoutMillis = 100000
                         this.requestTimeoutMillis = 100000
-                    }
-                    install(ContentNegotiation) {
-                        json(DefaultJsonConverter)
-                    }
-                    install(SSE) {
-                        this.reconnectionTime = 30.seconds
                     }
                     install(Logging) {
                         level = LogLevel.ALL

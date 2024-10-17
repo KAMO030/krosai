@@ -11,12 +11,17 @@ import org.krosai.openai.options.OpenAiImageOptions
 
 class OpenAiModelFactoryConfig {
 
-    var clientBlock: HttpClientConfig<*>.() -> Unit = {
-        install(ContentNegotiation) {
-            json(DefaultJsonConverter)
+    companion object {
+        val DefaultClientBlock: HttpClientConfig<*>.() -> Unit = {
+            install(ContentNegotiation) {
+                json(DefaultJsonConverter)
+            }
+            install(SSE)
+            expectSuccess = true
         }
-        install(SSE)
     }
+
+    var clientBlock: HttpClientConfig<*>.() -> Unit = {}
 
 
     var baseUrl: String = "https://api.openai.com"
