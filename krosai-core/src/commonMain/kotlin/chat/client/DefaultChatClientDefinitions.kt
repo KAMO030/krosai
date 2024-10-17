@@ -19,7 +19,7 @@ class DefaultChatClient(
 ) : ChatClient {
 
     override suspend fun call(requestScopeSpec: ChatClientRequestDefinition?): ChatResponse {
-        val requestScope = DefaultChatClientRequestScope(defaultRequest)
+        val requestScope = defaultRequest.copy()
             .also { requestScopeSpec?.invoke(it) }
 
         var request = requestScope.chatClientRequest
@@ -38,7 +38,7 @@ class DefaultChatClient(
     }
 
     override suspend fun stream(requestScopeSpec: ChatClientRequestDefinition?): Flow<ChatResponse> {
-        val requestScope = DefaultChatClientRequestScope(defaultRequest)
+        val requestScope = defaultRequest.copy()
             .also { requestScopeSpec?.invoke(it) }
 
         var request = requestScope.chatClientRequest

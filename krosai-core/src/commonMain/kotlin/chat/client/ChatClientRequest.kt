@@ -47,4 +47,7 @@ data class ChatClientRequest(
         enhancerParams = clientRequest.enhancerParams.toMutableMap(),
         messages = clientRequest.messages.toMutableList(),
     )
+
+    fun copy(): ChatClientRequest = ChatClientRequest(this)
+
 }
