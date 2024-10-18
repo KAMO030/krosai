@@ -27,8 +27,8 @@ interface ChatMemorySupport {
      *
      * @return the conversation ID
      */
-    fun Map<String, Any>.getConversationId(): String =
-        get(CONVERSATION_ID_KEY).let {
+    val Map<String, Any>.conversationId: String
+        get() = get(CONVERSATION_ID_KEY).let {
             when (it) {
                 is String -> it
                 null -> CONVERSATION_ID_DEFAULT
@@ -42,8 +42,8 @@ interface ChatMemorySupport {
      *
      * @return the value of the 'chat_memory_take_last_n' key as an integer
      */
-    fun Map<String, Any>.getTakeLastN(): Int =
-        get(TAKE_LAST_N_KEY).let {
+    val Map<String, Any>.takeLastN: Int
+        get() = get(TAKE_LAST_N_KEY).let {
             when (it) {
                 is Int -> it
                 is String -> it.toInt()

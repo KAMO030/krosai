@@ -23,8 +23,8 @@ class MessageChatMemoryEnhancer(
 ) : ChatMemorySupport, Enhancer {
 
     override fun enhanceRequest(request: ChatClientRequest): ChatClientRequest {
-        val conversationId = request.enhancerParams.getConversationId()
-        val takeLastN = request.enhancerParams.getTakeLastN()
+        val conversationId = request.enhancerParams.conversationId
+        val takeLastN = request.enhancerParams.takeLastN
         request.messages += messageStore[conversationId to takeLastN]
         request.userTextTemplate?.invoke(request.userParams)?.let {
             messageStore += conversationId to Message.User(it)
@@ -34,7 +34,7 @@ class MessageChatMemoryEnhancer(
 
     override fun enhanceResponse(response: ChatResponse, enhancerParams: Map<String, Any>): ChatResponse =
         response.also {
-            val conversationId = enhancerParams.getConversationId()
+            val conversationId = enhancerParams.conversationId
             messageStore += conversationId to Message.User(it.content)
         }
 
@@ -48,7 +48,7 @@ class MessageChatMemoryEnhancer(
                 stringBuilder.append(response.content)
             }.onCompletion { error ->
                 if (error != null) return@onCompletion
-                val conversationId = enhancerParams.getConversationId()
+                val conversationId = enhancerParams.conversationId
                 val assistant = Message.Assistant(stringBuilder.toString())
                 messageStore += conversationId to assistant
             }
